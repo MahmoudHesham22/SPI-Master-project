@@ -3,7 +3,9 @@ package spi_master_pkg;
     import uvm_pkg::*;
     `include "uvm_macros.svh"
 
-  
+    // Interfaces
+    `include "interfaces/spi_interface.sv"
+    `include "interfaces/apb_interface.sv"
 
     // Sequence Items
     `include "sequence_items/spi_sequence_item.sv"
@@ -33,6 +35,10 @@ package spi_master_pkg;
     // Environment
     `include "env.svh"
  
+
+    // Configurations
+    `include "spi_config.sv"
+    `include "apb_config.sv"
     
     //sequences
 
