@@ -1,10 +1,10 @@
 class apb_agent extends uvm_agent;
     `uvm_component_utils(apb_agent)
-    apb_driver driver;
-    apb_monitor monitor;
-    apb_confg cfg;
-    sqr_class sqr;
-    uvm_analysis_port #(seq_item) agt_ap;
+    apb_driver apb_driver;
+    apb_monitor apb_monitor;
+    apb_config apb_cfg;
+    apb_sequencer apb_sqr;
+    uvm_analysis_port #(apb_seq_item) apb_agt_ap;
         
     function new(string name="apb_agent", uvm_component parent = null);
             super.new(name,parent);
@@ -12,28 +12,28 @@ class apb_agent extends uvm_agent;
         
     function void build_phase(uvm_phase phase);
         super.build_phase(phase);
-        monitor = apb_monitor::type_id::create("mon",this);
+        apb_monitor = apb_monitor::type_id::create("apb_monitor",this);
         
-        if(!uvm_config_db #(apb_confg) :: get(this,"","CFG",cfg))
-        `uvm_fatal("build_phase","no");
+        if(!uvm_config_db #(apb_config) :: get(this,"","CFG",apb_cfg))
+        `uvm_fatal("build_phase","error in getting config object");
         
-        if(cfg.is_active==UVM_ACTIVE)
+        if(apb_cfg.is_active==UVM_ACTIVE)
             begin
-                driver = apb_driver::type_id::create("driver",this);
-                sqr = sqr_class::type_id::create("sqr",this);   
+                apb_driver = apb_driver::type_id::create("apb_driver",this);
+                apb_sqr = apb_sequencer::type_id::create("apb_sqr",this);   
             end
-        agt_ap = new("agt_ap",this);
+        apb_agt_ap = new("apb_agt_ap",this);
     endfunction
         
     function void connect_phase (uvm_phase phase);
         super.connect_phase(phase);
-        monitor.apb_slave_test_vif=cfg.apb_slave_test_vif;
-        if(cfg.is_active==UVM_ACTIVE)
+        apb_monitor.apb_slave_test_vif=apb_cfg.apb_slave_test_vif;
+        if(apb_cfg.is_active==UVM_ACTIVE)
             begin
-                driver.apb_slave_test_vif=cfg.apb_slave_test_vif;
-                driver.seq_item_port.connect(sqr.seq_item_export);    
+                apb_driver.apb_slave_vif = apb_cfg.apb_slave_vif;
+                apb_driver.seq_item_port.connect(apb_sqr.seq_item_export);    
             end
 
-        monitor.mon_ap.connect(agt_ap);
+        apb_monitor.apb_mon_ap.connect(apb_agt_ap);
     endfunction 
 endclass //className extends superClass
