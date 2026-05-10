@@ -1,38 +1,40 @@
 
-class Spi_agent extends uvm_agent;
-    `uvm_component_utils(Spi_agent)
-    Spi_driver driver;
-    Spi_monitor monitor;
-    Spi_confg cfg;
-    sqr_class sqr;
-    uvm_analysis_port #(seq_item) agt_ap;
+class spi_agent extends uvm_agent;
+    `uvm_component_utils(spi_agent)
+    spi_driver spi_driver;
+    spi_monitor spi_monitor;
+    spi_config spi_cfg;
+    spi_sequencer spi_sequencer;
+    uvm_analysis_port #(spi_sequence_item) spi_agt_ap;
         
-    function new(string name="Spi_agent", uvm_component parent = null);
-            super.new(name,parent);
+    function new(string name="spi_agent", uvm_component parent = null);
+        super.new(name,parent);
     endfunction //new()
         
     function void build_phase(uvm_phase phase);
-            super.build_phase(phase);
-            monitor = Spi_monitor::type_id::create("mon",this);
-        if(!uvm_config_db #(Spi_confg) :: get(this,"","CFG",cfg))
-        `uvm_fatal("build_phase","no");
-        if(cfg.is_active==UVM_ACTIVE)
+        super.build_phase(phase);
+        spi_monitor = spi_monitor::type_id::create("spi_monitor",this);
+        
+        if(!uvm_config_db #(spi_config) :: get(this,"","CFG",spi_cfg))
+        `uvm_fatal("build_phase","error in getting config object");
+        
+        if(spi_cfg.is_active==UVM_ACTIVE)
             begin
-                driver = Spi_driver::type_id::create("driver",this);
-                sqr = sqr_class::type_id::create("sqr",this);   
+            spi_driver = spi_driver::type_id::create("spi_driver",this);
+            spi_sequencer = spi_sequencer::type_id::create("spi_sequencer",this);   
             end
-        agt_ap = new("agt_ap",this);
+        spi_agt_ap = new("spi_agt_ap",this);
     endfunction
         
     function void connect_phase (uvm_phase phase);
         super.connect_phase(phase);
-        monitor.Spi_slave_test_vif=cfg.Spi_slave_test_vif;
-        if(cfg.is_active==UVM_ACTIVE)
+        spi_monitor.spi_slave_vif=spi_cfg.spi_slave_vif;
+        if(spi_cfg.is_active==UVM_ACTIVE)
             begin
-                driver.Spi_slave_test_vif=cfg.Spi_slave_test_vif;
-                driver.seq_item_port.connect(sqr.seq_item_export);    
+                spi_driver.spi_slave_vif=spi_cfg.spi_slave_vif;
+                spi_driver.seq_item_port.connect(spi_sequencer.seq_item_export);    
             end
 
-        monitor.mon_ap.connect(agt_ap);
+        spi_monitor.mon_ap.connect(spi_agt_ap);
     endfunction 
 endclass //className extends superClass
