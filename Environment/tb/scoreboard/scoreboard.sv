@@ -1,4 +1,3 @@
-
 //------------------------------------------------------------------------------
 //
 // CLASS: scoreboard
@@ -15,16 +14,16 @@ class scoreboard extends uvm_scoreboard;
     // Analysis infrastructure
     // (Export <-> FIFO) for transactions fed to the block as controllers transactions
     uvm_analysis_export #(apb_sequence_item)apb_sb_export; 
-    uvm_tlm_analysis_fifo #(apb_sequence_item) fifo_apb_in;
+    uvm_tlm_analysis_fifo #(apb_sequence_item) fifo_apb;
     // (Export <-> FIFO) for transactions fed to the block as controllers transactions
     uvm_analysis_export #(spi_sequence_item) spi_sb_export;
-    uvm_tlm_analysis_fifo #(spi_sequence_item) fifo_spi_in;
+    uvm_tlm_analysis_fifo #(spi_sequence_item) fifo_spi;
 
 
     // Transaction handles
     // Transactions received by the driver and the monitor
-    apb_sequence_item item_apb_in,item_apb_out;
-    spi_sequence_item item_spi_in,item_spi_out;
+    apb_sequence_item item_apb;
+    spi_sequence_item item_spi;
     // Statistics tracking
     // Error and correct counts
     bit match;
@@ -52,13 +51,9 @@ function void build_phase(uvm_phase phase);
     super.build_phase(phase);
     `uvm_info("build_phase", "Building scoreboard and creating analysis ports and FIFOs", UVM_LOW)
     apb_sb_export = new("apb_sb_export", this);
-    fifo_apb_in = new("fifo_apb_in", this);
+    fifo_apb = new("fifo_apb", this);
     spi_sb_export = new("spi_sb_export", this);
-    fifo_spi_in = new("fifo_spi_in", this);
-    apb_sb_export = new("apb_sb_export", this);
-    fifo_apb_out = new("fifo_apb_out", this);
-    spi_sb_export = new("spi_sb_export", this);
-    fifo_spi_out = new("fifo_spi_out", this);
+    fifo_spi = new("fifo_spi", this);
     `uvm_info("build_phase", "finished building scoreboard", UVM_LOW)
     cntxt = FSMContext::type_id::create("FSMContext");
     
@@ -70,10 +65,8 @@ endfunction : build_phase
 function void connect_phase(uvm_phase phase);
     super.connect_phase(phase);
     `uvm_info("connect_phase", "Connecting LTSM_env components and virtual sequencer", UVM_LOW)
-    apb_sb_export.connect(fifo_apb_in.analysis_export);
-    spi_sb_export.connect(fifo_spi_in.analysis_export);
-    apb_sb_export.connect(fifo_apb_out.analysis_export);
-    spi_sb_export.connect(fifo_spi_out.analysis_export);
+    apb_sb_export.connect(fifo_apb.analysis_export);
+    spi_sb_export.connect(fifo_spi.analysis_export);
 endfunction : connect_phase
 
 // report_phase
@@ -130,38 +123,11 @@ task run_phase(uvm_phase phase);
         
         fork
             // Wait for transactions to arrive on all input FIFOs
-            fifo_apb_in.get(item_apb_in);
-            fifo_spi_in.get(item_spi_in);
-            fifo_apb_out.get(item_apb_out);
-            fifo_spi_out.get(item_spi_out);
+            fifo_apb.get(item_apb);
+            fifo_spi.get(item_spi);
         join
-        //`uvm_info("scoreboard", $sformatf("Received item from fifo_apb_in"), UVM_LOW)
-        // fifo_spi_in.get(item_spi_in);
-        // //`uvm_info("scoreboard", $sformatf("Received item from fifo_spi_in"), UVM_LOW)
-        // fifo_rx_fsm_sb_in.get(item_rx_fsm_sb_in);
-        // //`uvm_info("scoreboard", $sformatf("Received item from fifo_rx_fsm_sb_in"), UVM_LOW)
-        // fifo_tx_fsm_sb_in.get(item_tx_fsm_sb_in);
-        // //`uvm_info("scoreboard", $sformatf("Received item from fifo_tx_fsm_sb_in"), UVM_LOW)
-            fifo_rx_fsm_sb_out.get(item_rx_fsm_sb_out);
-            fifo_tx_fsm_sb_out.get(item_tx_fsm_sb_out);            
-        join
-        //`uvm_info("scoreboard", $sformatf("Received item from fifo_apb_in"), UVM_LOW)
-        // fifo_spi_in.get(item_spi_in);
-        // //`uvm_info("scoreboard", $sformatf("Received item from fifo_rdi_in"), UVM_LOW)
-        // fifo_rx_fsm_sb_in.get(item_rx_fsm_sb_in);
-        // //`uvm_info("scoreboard", $sformatf("Received item from fifo_rx_fsm_sb_in"), UVM_LOW)
-        // fifo_tx_fsm_sb_in.get(item_tx_fsm_sb_in);
-        // //`uvm_info("scoreboard", $sformatf("Received item from fifo_tx_fsm_sb_in"), UVM_LOW)
-        // fifo_controllers_out.get(item_controllers_out);
-        // //`uvm_info("scoreboard", $sformatf("Received item from fifo_controllers_out"), UVM_LOW)
-        // fifo_rdi_out.get(item_rdi_out);
-        // //`uvm_info("scoreboard", $sformatf("Received item from fifo_rdi_out"), UVM_LOW)
-        // fifo_rx_fsm_sb_out.get(item_rx_fsm_sb_out);
-        // //`uvm_info("scoreboard", $sformatf("Received item from fifo_rx_fsm_sb_out"), UVM_LOW)
-        // fifo_tx_fsm_sb_out.get(item_tx_fsm_sb_out);
-        //`uvm_info("scoreboard", $sformatf("Received item from fifo_tx_fsm_sb_out"), UVM_LOW)
-        //`uvm_info("scoreboard", $sformatf("finished getting items from fifos and begining the do action"), UVM_LOW)
-       // match = ref_model.doAction(item_apb_in, item_spi_in, item_apb_out, item_spi_out);
+
+
         if (match) begin
             correct_count++;
         end else begin
