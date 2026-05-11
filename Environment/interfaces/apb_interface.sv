@@ -16,4 +16,7 @@ interface apb_if (input logic PCLK);
 
     modport monitor (input PCLK, PRESETn, PSEL, PENABLE, PWRITE, PADDR, PWDATA, PRDATA, PREADY, PSLVERR);
 
+    modport driver (input PCLK, PRESETn,
+                     output PSEL, PENABLE, PWRITE, PADDR, PWDATA);
+                     
 endinterface : apb_if
