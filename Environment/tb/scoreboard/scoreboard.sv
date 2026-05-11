@@ -9,8 +9,8 @@
 //
 //------------------------------------------------------------------------------
 
-class scoreboard extends uvm_scoreboard;
-    `uvm_component_utils(scoreboard)
+class spi_scoreboard extends uvm_scoreboard;
+    `uvm_component_utils(spi_scoreboard)
     // Analysis infrastructure
     // (Export <-> FIFO) for transactions fed to the block as controllers transactions
     uvm_analysis_export #(apb_sequence_item)apb_sb_export; 
@@ -24,6 +24,7 @@ class scoreboard extends uvm_scoreboard;
     // Transactions received by the driver and the monitor
     apb_sequence_item item_apb;
     spi_sequence_item item_spi;
+    spi_ref_model    model;
     // Statistics tracking
     // Error and correct counts
     bit match;
@@ -40,7 +41,7 @@ class scoreboard extends uvm_scoreboard;
     //
     // Creates a new scoreboard instance with the given name and parent.
 
-function new(string name = "scoreboard", uvm_component parent = null);
+function new(string name = "spi_scoreboard", uvm_component parent = null);
     super.new(name, parent);
 endfunction : new
 
@@ -54,9 +55,8 @@ function void build_phase(uvm_phase phase);
     fifo_apb = new("fifo_apb", this);
     spi_sb_export = new("spi_sb_export", this);
     fifo_spi = new("fifo_spi", this);
+    model = new();
     `uvm_info("build_phase", "finished building scoreboard", UVM_LOW)
-    cntxt = FSMContext::type_id::create("FSMContext");
-    
 endfunction : build_phase
 
 // connect_phase
@@ -127,6 +127,7 @@ task run_phase(uvm_phase phase);
             fifo_spi.get(item_spi);
         join
 
+        match = model.do_action(item_apb, item_spi);
 
         if (match) begin
             correct_count++;
@@ -137,4 +138,4 @@ task run_phase(uvm_phase phase);
     end
 endtask : run_phase
 
-endclass : scoreboard
+endclass : spi_scoreboard
