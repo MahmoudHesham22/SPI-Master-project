@@ -1,19 +1,18 @@
-interface apb_if (input logic PCLK);
-    
-    logic       PRESETn;
-    logic        PSEL;
-    logic        PENABLE;
-    logic        PWRITE;
-    logic [7:0]  PADDR;
-    logic [31:0] PWDATA;
-    logic [31:0] PRDATA;
-    logic        PREADY;
-    logic        PSLVERR;
+interface spi_if (input logic PCLK);
 
-                     
-    modport DUT (input PCLK, PRESETn, PSEL, PENABLE, PWRITE, PADDR, PWDATA, 
-                     output PRDATA, PREADY, PSLVERR);
+    logic      PRESETn;
+    logic        SCLK;          
+    logic        MOSI;          
+    logic        MISO;          
+    logic [3:0]  SS_n;          
+    logic        IRQ;           
 
-    modport monitor (input PCLK, PRESETn, PSEL, PENABLE, PWRITE, PADDR, PWDATA, PRDATA, PREADY, PSLVERR);
+    modport DUT  (input PCLK, PRESETn, MISO,
+                     output SCLK, MOSI, SS_n, IRQ);
 
-endinterface : apb_if
+    modport monitor (input PCLK, PRESETn, SCLK, MOSI, MISO, SS_n, IRQ);
+
+    modport driver (input PCLK, PRESETn,
+                     output SCLK, MOSI, SS_n, IRQ);
+
+endinterface : spi_if
