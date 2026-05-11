@@ -1,7 +1,7 @@
 class spi_monitor extends uvm_monitor;
     `uvm_component_utils(spi_monitor)
     spi_sequence_item item;
-    virtual spi_if spi_vif;
+    virtual spi_if.monitor spi_vif;
     uvm_analysis_port #(spi_sequence_item) spi_mon_ap;
     
     function new(string name = "spi_monitor",uvm_component parent = null);

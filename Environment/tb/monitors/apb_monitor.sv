@@ -1,7 +1,7 @@
 class apb_monitor extends uvm_monitor;
      `uvm_component_utils(apb_monitor)
     apb_sequence_item apb_item;
-    virtual apb_if apb_vif;
+    virtual apb_if.monitor apb_vif;
     uvm_analysis_port #(apb_sequence_item) apb_mon_ap;
        
     function new(string name = "apb_monitor",uvm_component parent = null);
