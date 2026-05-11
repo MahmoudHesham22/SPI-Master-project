@@ -103,6 +103,65 @@ class spi_ref_model;
         endcase
     endfunction
 
+    function bit [31:0] expected_apb_read(input bit [7:0] addr);
+        case (addr)
+            APB_CTRL:    return {24'h0, reg_ctrl_width, reg_ctrl_loopback, reg_ctrl_lsb_first, reg_ctrl_mode, reg_ctrl_mstr, reg_ctrl_en};
+            APB_TX_DATA: return 32'h0;
+            APB_CLK_DIV: return {16'h0, reg_clk_div};
+            APB_SS_CTRL: return {24'h0, reg_ss_val, reg_ss_en};
+            APB_INT_EN:  return {{27{1'b0}}, reg_int_en};
+            APB_INT_STAT:return {{27{1'b0}}, reg_int_stat};
+            APB_DELAY:   return {24'h0, reg_delay};
+            default:     return 32'h0;
+        endcase
+    endfunction
+
+    function bit expected_irq();
+        return |(reg_int_stat & reg_int_en);
+    endfunction
+
+    function bit [3:0] expected_ss_n();
+        return (~reg_ss_en) | reg_ss_val;
+    endfunction
+
+    function bit do_action(input apb_sequence_item apb_item,
+                             input spi_sequence_item spi_item);
+        bit match;
+        bit [31:0] expected_prdata;
+
+        // Drive the reference model state from the APB transaction inputs.
+        match = 1'b1;
+
+        if (apb_item.PSEL && apb_item.PENABLE && apb_item.PWRITE) begin
+            model_apb_write(apb_item.PADDR, apb_item.PWDATA);
+        end
+
+        // Compare DUT read data against the ref model's expected read output.
+        if (apb_item.PSEL && apb_item.PENABLE && !apb_item.PWRITE) begin
+            expected_prdata = expected_apb_read(apb_item.PADDR);
+            if (apb_item.PRDATA !== expected_prdata) begin
+                $display("[DO_ACTION] PRDATA mismatch at addr 0x%02h: expected=0x%08h actual=0x%08h",
+                         apb_item.PADDR, expected_prdata, apb_item.PRDATA);
+                match = 1'b0;
+            end
+        end
+
+        // Compare DUT SPI outputs against the reference model outputs.
+        if (spi_item.SS_n !== expected_ss_n()) begin
+            $display("[DO_ACTION] SS_n mismatch: expected=0x%01h actual=0x%01h",
+                     expected_ss_n(), spi_item.SS_n);
+            match = 1'b0;
+        end
+
+        if (spi_item.IRQ !== expected_irq()) begin
+            $display("[DO_ACTION] IRQ mismatch: expected=%0b actual=%0b",
+                     expected_irq(), spi_item.IRQ);
+            match = 1'b0;
+        end
+
+        return match;
+    endfunction
+
     function void model_transfer(input bit [31:0] miso_in);
         bit [31:0] tx_word, rx_word, miso_masked;
         if (tx_fifo.size() == 0) return;
@@ -154,4 +213,4 @@ class spi_ref_model;
 
 endclass
 
-`endif
+
