@@ -9,7 +9,7 @@
 class spi_driver extends uvm_driver#(spi_sequence_item);
     `uvm_component_utils(spi_driver)
     spi_sequence_item spi_item;
-    virtual spi__if spi_vif;
+    virtual spi_if.driver spi_vif;
         
     function new(string name="spi_driver",uvm_component parent = null);
         super.new(name,parent);
