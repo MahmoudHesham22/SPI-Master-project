@@ -3,48 +3,50 @@ package spi_master_pkg;
     import uvm_pkg::*;
     `include "uvm_macros.svh"
 
-    // Interfaces
-    `include "interfaces/spi_interface.sv"
-    `include "interfaces/apb_interface.sv"
 
     // Sequence Items
-    `include "sequence_items/spi_sequence_item.sv"
-    `include "sequence_items/apb_sequence_item.sv"
-  
-    
+    `include "sequence items/spi_sequence_item.sv"
+    `include "sequence items/apb_sequence_item.sv"
+
     // Sequencers
     `include "sequencers/apb_sequencer.sv"
     `include "sequencers/spi_sequencer.sv"
-    
-    // Monitors
-    `include "monitors/apb_monitor.sv"
-    `include "monitors/Spi_monitor.sv"
-    
-    // Drivers
-    `include "drivers/apb_driver.sv"
-    `include "drivers/Spi_driver.sv"
-    
-
-    // Agents 
-    `include "agents/apb_agent.sv"
-    `include "agents/spi_agent.sv"
-
-    // scoreboard
-    `include "scoreboard/scoreboard.sv"
-
-    // Environment
-    `include "env.svh"
- 
+      
 
     // Configurations
     `include "spi_config.sv"
     `include "apb_config.sv"
     
+    // Monitors
+    `include "monitors/apb_monitor.sv"
+    `include "monitors/spi_monitor.sv"
+    
+    // Drivers
+    `include "drivers/apb_driver.sv"
+    `include "drivers/spi_driver.sv"
+
+    // Agents 
+    `include "agents/apb_agent.sv"
+    `include "agents/spi_agent.sv"
+
+    //reference model
+    //`include "spi_reference_model.sv"
+
+
+    // scoreboard
+    `include "scoreboard/scoreboard.sv"
+
+    // Environment
+    `include "env.sv"
+ 
+
+
     //sequences
 
   
     
     
-    // Tests    
+    // Tests
+    `include "spi_test_base.sv"
     
 endpackage : spi_master_pkg
