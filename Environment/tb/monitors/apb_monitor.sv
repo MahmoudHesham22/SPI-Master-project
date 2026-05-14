@@ -4,7 +4,7 @@
 // File       : apb_monitor.sv
 //------------------------------------------------------------------------------
 // Description: This file contains the implementation of the APB monitor class, which is responsible for monitoring the APB signals based on the sequence items received from the sequencer. The monitor interacts with the APB
-//              slave interface to perform the necessary operations for the APB communication using clocking blocks for synchronization.
+//               interface to perform the necessary operations for the APB communication using clocking blocks for synchronization.
 //------------------------------------------------------------------------------
 
 
