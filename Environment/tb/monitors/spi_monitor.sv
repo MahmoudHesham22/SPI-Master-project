@@ -1,3 +1,12 @@
+//------------------------------------------------------------------------------
+// Title      : SPI Master Project
+// Project    : SPI Master
+// File       : spi_monitor.sv
+//------------------------------------------------------------------------------
+// Description: This file contains the implementation of the SPI monitor class, which is responsible for monitoring the SPI signals based on the sequence items received from the sequencer. The monitor interacts with the SPI
+//              slave interface to perform the necessary operations for the SPI communication using clocking blocks for synchronization.
+//------------------------------------------------------------------------------
+
 class spi_monitor extends uvm_monitor;
     `uvm_component_utils(spi_monitor)
     spi_sequence_item item;
@@ -17,13 +26,18 @@ class spi_monitor extends uvm_monitor;
         super.run_phase(phase);
         forever begin
             item = spi_sequence_item::type_id::create("item");
-            @(negedge spi_vif.clk);
-            item.SS_n = spi_vif.SS_n;
-            item.rst_n = spi_vif.rst_n;
-            item.tx_valid = spi_vif.tx_valid;
-            item.MOSI = spi_vif.MOSI;
-            item.tx_data = spi_vif.tx_data;
+            
+            // Sample signals through clocking block
+            @(spi_vif.cb_mon);
+            item.SCLK = spi_vif.cb_mon.SCLK;
+            item.MOSI = spi_vif.cb_mon.MOSI;
+            item.MISO = spi_vif.cb_mon.MISO;
+            item.SS_n = spi_vif.cb_mon.SS_n;
+            item.IRQ = spi_vif.cb_mon.IRQ;
+
             spi_mon_ap.write(item);
         end
     endtask //
 endclass //className extends superClass
+
+ 
