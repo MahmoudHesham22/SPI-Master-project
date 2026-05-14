@@ -4,7 +4,7 @@
 // File       : spi_monitor.sv
 //------------------------------------------------------------------------------
 // Description: This file contains the implementation of the SPI monitor class, which is responsible for monitoring the SPI signals based on the sequence items received from the sequencer. The monitor interacts with the SPI
-//              slave interface to perform the necessary operations for the SPI communication using clocking blocks for synchronization.
+//              interface to perform the necessary operations for the SPI communication using clocking blocks for synchronization.
 //------------------------------------------------------------------------------
 
 class spi_monitor extends uvm_monitor;
