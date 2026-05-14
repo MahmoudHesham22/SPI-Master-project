@@ -5,7 +5,7 @@
 // File       : apb_driver.sv
 //------------------------------------------------------------------------------
 // Description: This file contains the implementation of the APB driver class, which is responsible for driving the APB signals based on the sequence items received from the sequencer. The driver interacts with the APB
-//              slave interface to perform the necessary operations for the APB communication using clocking blocks for synchronization.
+//              interface to perform the necessary operations for the APB communication using clocking blocks for synchronization.
 //------------------------------------------------------------------------------
 class apb_driver extends uvm_driver#(apb_sequence_item);
     `uvm_component_utils(apb_driver)
