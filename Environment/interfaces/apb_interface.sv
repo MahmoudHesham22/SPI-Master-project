@@ -12,6 +12,16 @@ interface apb_if (PCLK);
     logic        PREADY;
     logic        PSLVERR;
 
+    initial begin
+        PRESETn = 0;
+        PSEL = 0;
+        PENABLE = 0;
+        PWRITE = 0;
+        PADDR = 8'h00;
+        PWDATA = 32'h00000000;
+    end
+
+
     // --------------- Driver-side clocking block ----------------------------
     clocking cb_master @(posedge PCLK);
         default input #1step output #1;

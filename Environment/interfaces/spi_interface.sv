@@ -8,6 +8,10 @@ interface spi_if (PCLK);
     logic [3:0]  SS_n;          
     logic        IRQ;           
 
+    initial begin
+        MISO = 0;
+    end
+
     // --------------- Slave driver-side clocking block ----------------------------
     clocking cb_slave @(posedge PCLK);
         default input #1step output #0;
