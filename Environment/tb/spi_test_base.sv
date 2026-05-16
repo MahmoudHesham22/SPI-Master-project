@@ -16,11 +16,11 @@ class test_base extends uvm_test;
     spi_config spi_cfg;
     apb_config apb_cfg;
 
-    function spi_test_base::new(string name = "spi_test_base", uvm_component parent = null);
+    function new(string name = "spi_test_base", uvm_component parent = null);
         super.new(name, parent);
     endfunction : new
 
-    function void spi_test_base::build_phase(uvm_phase phase);
+    function void build_phase(uvm_phase phase);
         super.build_phase(phase);
 
 
@@ -35,12 +35,15 @@ class test_base extends uvm_test;
         if(!uvm_config_db#(virtual apb_if)::get(this, "", "APB_IF", apb_cfg.apb_vif))
         `uvm_fatal("build_phase", "TEST - Unable to get the APB_IF from the uvm_config_db")
 
-        uvm_config_db#(spi_config)::set(this, "env", "CFG", spi_cfg);
-        uvm_config_db#(apb_config)::set(this, "env", "CFG", apb_cfg);
+        spi_cfg.is_active = UVM_ACTIVE;
+        apb_cfg.is_active = UVM_ACTIVE;
+
+        uvm_config_db#(spi_config)::set(this, "*", "CFG", spi_cfg);
+        uvm_config_db#(apb_config)::set(this, "*", "CFG", apb_cfg);
 
     endfunction : build_phase
 
-    function void spi_test_base::end_of_elaboration_phase(uvm_phase phase);
+    function void end_of_elaboration_phase(uvm_phase phase);
         super.end_of_elaboration_phase(phase);
         
         uvm_top.print_topology(); // Prints entire testbench hierarchy 

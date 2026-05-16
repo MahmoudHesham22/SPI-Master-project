@@ -30,23 +30,40 @@ package spi_master_pkg;
     `include "agents/spi_agent.sv"
 
     //reference model
-    //`include "spi_reference_model.sv"
+    `include "ref_model.sv"
 
 
     // scoreboard
     `include "scoreboard/scoreboard.sv"
+
+    // coverage
+    `include "spi_coverage.sv"
 
     // Environment
     `include "env.sv"
  
 
 
-    //sequences
+    // ---- Base sequences ----
+    `include "sequences/sequence_base.sv"
+    `include "sequences/spi_reset_seq.sv"
+    `include "sequences/apb_reset_seq.sv"
+    `include "sequences/main_sequence.sv"
+    `include "sequences/nothing.sv"
 
+    // ---- Requirement sequences (R1-R25) ----
+    `include "sequences/r1_r2_reg_seq.sv"
+    `include "sequences/r3_ctrl_en_seq.sv"
+    `include "sequences/r4_r8_spi_protocol_seq.sv"
+    `include "sequences/r9_r15_fifo_seq.sv"
+    `include "sequences/r16_r18_irq_seq.sv"
+    `include "sequences/r19_r23_misc_seq.sv"
   
     
     
     // Tests
     `include "spi_test_base.sv"
+    `include "sanity_test.sv"
+    `include "full_req_test.sv"
     
 endpackage : spi_master_pkg

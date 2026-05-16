@@ -31,7 +31,8 @@ module spi_master_top;
     spi_if spi_if(clk);
     apb_if apb_if(clk);
 
-    spi_master(.PRESETn(spi_if.PRESETn),
+    spi_master u_dut(.PRESETn(apb_if.PRESETn),
+               .PCLK(spi_if.PCLK),
                .SCLK(spi_if.SCLK),
                .MOSI(spi_if.MOSI),
                .MISO(spi_if.MISO),
@@ -52,6 +53,6 @@ module spi_master_top;
         uvm_config_db#(virtual spi_if)::set(null,"uvm_test_top", "SPI_IF",   spi_if  );
         uvm_config_db#(virtual apb_if)::set(null,"uvm_test_top", "APB_IF",   apb_if  );
 
-        run_test("ACTIVE_test");
+        run_test("full_req_test");
     end
 endmodule : spi_master_top

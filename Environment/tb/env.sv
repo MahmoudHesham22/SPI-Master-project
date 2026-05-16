@@ -16,6 +16,7 @@ class spi_env extends uvm_env;
         sb = spi_scoreboard::type_id::create("sb",this);
         cov = spi_coverage::type_id::create("cov",this);
     endfunction 
+    
     function void connect_phase (uvm_phase phase);
         super.connect_phase(phase);
         spi_agt.spi_agt_ap.connect(sb.spi_sb_export);
