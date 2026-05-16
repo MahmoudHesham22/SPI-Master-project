@@ -64,7 +64,7 @@ endfunction : build_phase
 
 function void connect_phase(uvm_phase phase);
     super.connect_phase(phase);
-    `uvm_info("connect_phase", "Connecting LTSM_env components and virtual sequencer", UVM_LOW)
+    `uvm_info("connect_phase", "Connecting scoreboard analysis ports to FIFOs", UVM_LOW)
     apb_sb_export.connect(fifo_apb.analysis_export);
     spi_sb_export.connect(fifo_spi.analysis_export);
 endfunction : connect_phase
@@ -116,26 +116,37 @@ endfunction : report_phase
 // compare
 // -------
 
+// compare
+// -------
+
 task run_phase(uvm_phase phase);
     super.run_phase(phase);
     
-    forever begin
-        
-        fork
-            // Wait for transactions to arrive on all input FIFOs
+    fork
+        // Process 1: APB Checking
+        forever begin
             fifo_apb.get(item_apb);
-            fifo_spi.get(item_spi);
-        join
-
-        match = model.do_action(item_apb, item_spi);
-
-        if (match) begin
-            correct_count++;
-        end else begin
-            error_count++;
+            match = model.check_apb(item_apb); // Calls the new check_apb function
+            
+            if (match) correct_count++;
+            else error_count++;
+                
+            `uvm_info("scoreboard_apb", $sformatf("APB Transaction Result: %s, Total Correct: %0d, Total Errors: %0d", 
+                     (match ? "MATCH" : "MISMATCH"), correct_count, error_count), UVM_LOW)
         end
-       // `uvm_info("scoreboard", $sformatf("Current Transaction Result: %s, Total Correct: %0d, Total Errors: %0d", (match ? "MATCH" : "MISMATCH"), correct_count, error_count), UVM_LOW)
-    end
+        
+        // Process 2: SPI Checking
+        forever begin
+            fifo_spi.get(item_spi);
+            match = model.check_spi(item_spi); // Calls the new check_spi function
+            
+            if (match) correct_count++;
+            else error_count++;
+                
+            `uvm_info("scoreboard_spi", $sformatf("SPI Transaction Result: %s, Total Correct: %0d, Total Errors: %0d", 
+                     (match ? "MATCH" : "MISMATCH"), correct_count, error_count), UVM_LOW)
+        end
+    join_none
 endtask : run_phase
 
 endclass : spi_scoreboard
