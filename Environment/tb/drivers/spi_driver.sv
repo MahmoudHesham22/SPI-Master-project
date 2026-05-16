@@ -4,7 +4,7 @@
 // File       : spi_driver.sv
 //------------------------------------------------------------------------------
 // Description: This file contains the implementation of the SPI driver class, which is responsible for driving the SPI signals based on the sequence items received from the sequencer. The driver interacts with the SPI
-//             interface to perform the necessary operations for the SPI communication using clocking blocks for synchronization.
+//              interface to perform the necessary operations for the SPI communication using clocking blocks for synchronization.
 //------------------------------------------------------------------------------
 class spi_driver extends uvm_driver#(spi_sequence_item);
     `uvm_component_utils(spi_driver)
