@@ -7,7 +7,6 @@ class spi_sequence_item extends uvm_sequence_item;
             super.new(name);
     endfunction //new()
 
-    logic      PRESETn;
     logic        SCLK;          
     logic        MOSI;          
     logic        MISO;          
