@@ -28,13 +28,13 @@ class spi_agent extends uvm_agent;
         
     function void connect_phase (uvm_phase phase);
         super.connect_phase(phase);
-        spi_mntr.spi_slave_vif=spi_cfg.spi_slave_vif;
+        spi_mntr.spi_vif=spi_cfg.spi_vif;
         if(spi_cfg.is_active==UVM_ACTIVE)
             begin
-                spi_drvr.spi_slave_vif=spi_cfg.spi_slave_vif;
+                spi_drvr.spi_vif=spi_cfg.spi_vif;
                 spi_drvr.seq_item_port.connect(spi_sqr.seq_item_export);    
             end
 
-        spi_mntr.mon_ap.connect(spi_agt_ap);
+        spi_mntr.spi_mon_ap.connect(spi_agt_ap);
     endfunction 
 endclass //className extends superClass
